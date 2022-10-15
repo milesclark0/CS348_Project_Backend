@@ -1,0 +1,35 @@
+SETUP:
+create virtual environment and activate it
+move the virtual environment folder to active project directory.
+
+To use admin view in browser
+    py .\manage.py  createsuperuser
+    follow the prompts and navigate to http://127.0.0.1:8000/admin and login
+
+
+The api directory will serve as the center for all api related functionality
+for the app.
+
+CS348_Project is just handles general settings and other configs\
+
+apps directory holds all apps
+
+Before running:
+--If dependencies and packages are outdated
+    pip install -r requirements.txt
+    npm install
+--If added app or changed models
+    py .\manage.py  makemigrations
+    py .\manage.py  migrate
+
+
+Running BACKEND/API:
+    To run the server, issue the command
+    py .\manage.py runserver
+
+Views
+    You can see visualizations of the api urls by going to
+    http://127.0.0.1:8000/api/[api endpoint]/
+    you can also interact with them (POST or GET)
+
+
