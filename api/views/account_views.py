@@ -17,7 +17,11 @@ def login(request):
     username = request.data['username']
     password = request.data['password']
     data = {}
-    user = Customer.objects.get(username=username);
+    user = None
+    try:
+        user = Customer.objects.get(username=username);
+    except Customer.DoesNotExist:
+        pass
     if user:
         auth = user.password == Customer.encrypt_pass(password)
         if auth:
