@@ -28,7 +28,7 @@ def login(request):
             serializer = CustomerSerializer(user, many=False)
             request.session['user'] = serializer.data
             return Response(serializer.data)
-    data['failure'] = "incorrect username or password"
+    data['message'] = "incorrect username or password"
     return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -41,11 +41,11 @@ def logout(request):
             print(request.session['user'])
             if request.data["username"] == request.session['user']['username']:
                 del request.session['user']
-                data["success"] = "User logged out"
+                data["message"] = "User logged out"
                 return Response(data=data, status=status.HTTP_202_ACCEPTED)
     except KeyError:
         pass
-    data["failure"] = "Could not log out specified user"
+    data["message"] = "Could not log out specified user"
     return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 
