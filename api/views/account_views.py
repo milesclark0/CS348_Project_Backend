@@ -26,13 +26,14 @@ def login(request):
         auth = user.password == Customer.encrypt_pass(password)
         if auth:
             serializer = CustomerSerializer(user, many=False)
-            request.session['user'] = serializer.data
+            #request.session['user'] = serializer.data
             return Response(serializer.data)
-    data['message'] = "incorrect username or password"
+    data['message'] = "Incorrect Username or Password"
     return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
 
 #Logs user out
+#Probably wont be used
 @api_view(['POST'])
 def logout(request):
     data = {}
@@ -41,7 +42,7 @@ def logout(request):
             print(request.session['user'])
             if request.data["username"] == request.session['user']['username']:
                 del request.session['user']
-                data["message"] = "User logged out"
+                data["message"] = "User Logged Out"
                 return Response(data=data, status=status.HTTP_202_ACCEPTED)
     except KeyError:
         pass
@@ -57,5 +58,5 @@ def register(request):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
