@@ -32,4 +32,7 @@ Views
     http://127.0.0.1:8000/api/[api endpoint]/
     you can also interact with them (POST or GET)
 
+To get into the virtual environment
+    python3 -m venv ./venv
+
 
