@@ -1,6 +1,7 @@
 from django.urls import path
 from api.views import user_views
 from api.views import account_views
+from api.views import object_views
 
 
 urlpatterns = [
@@ -10,6 +11,10 @@ urlpatterns = [
 
 
     path('login/', account_views.login),
-    path('logout/', account_views.logout),
     path('register/', account_views.register),
+
+
+    path('getRecentOrder/<str:customer_id>', object_views.get_recent_order),
+    path('getOrders/<str:customer_id>', object_views.get_orders),
+
 ]
