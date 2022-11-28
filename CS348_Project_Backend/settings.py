@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': 'cs_348_project',
         'USER': 'root',
         'PASSWORD': 'Dragon257!',
-        'HOST': 'localhost',
+        'HOST': '35.194.95.71',
         'PORT': '3306',
     }
 }
