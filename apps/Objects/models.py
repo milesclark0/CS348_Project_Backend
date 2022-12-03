@@ -31,6 +31,11 @@ class Item(models.Model):
         except Item.DoesNotExist:
             return None
 
+    def getItems(searched_item):
+        items = Item.objects.all()
+        json = items.__dict__
+        return json
+
 
 
 

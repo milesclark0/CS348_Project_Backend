@@ -58,3 +58,12 @@ def create_order(request):
         serializer.save()
         return Response(serializer.data)
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_items(request):
+    try:
+        result = Item.objects.all()
+        serializer = ItemSerializer(result, context={'request': request}, many=True)
+        return Response(serializer.data)
+    except Item.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)   
