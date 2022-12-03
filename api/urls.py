@@ -16,5 +16,6 @@ urlpatterns = [
 
     path('getRecentOrder/<str:customer_id>', object_views.get_recent_order),
     path('getOrders/<str:customer_id>', object_views.get_orders),
+    path('createOrder/', object_views.create_order),
 
 ]

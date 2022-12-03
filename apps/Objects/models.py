@@ -62,9 +62,16 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     """
-        {
-            "total": 11.56,
-            "tip": 2.00
+        {      
+        "total": 11.56,
+        "tip": 2.00,
+        "date_time": "2022-11-30 03:47:01.464807",
+        "customer": 1,
+        "employee":1,
+        "items": [
+            {"item_id": 1, "cart_count": 2},
+            {"item_id": 2, "cart_count": 2}
+        ]
         }
     """
     total = models.DecimalField(max_digits=7, decimal_places=2, default=0.0, null=False)
