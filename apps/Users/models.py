@@ -76,6 +76,19 @@ class Customer(models.Model):
             if auth:
                 return user
         return None
+    
+    def changePassword(request):
+        username1 = request.data['username']
+        password = request.data['password']
+        user = None
+        try: 
+            user = Customer.objects.filter(username=username1)
+            user.update(password=Customer.encrypt_pass(password))
+        except Customer.DoesNotExist:
+            pass
+        if user:
+            return user[0]
+        return None
 
 class Employee(models.Model):
     """

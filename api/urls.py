@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('login/', account_views.login),
     path('register/', account_views.register),
+    path('changePassword/', account_views.changePassword),
 
 
     path('getRecentOrder/<str:customer_id>', object_views.get_recent_order),

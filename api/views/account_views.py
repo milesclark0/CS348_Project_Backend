@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.Users.models import *
 from apps.Users.serializers import *
+from django.contrib.auth import authenticate
 
 
 
@@ -20,6 +21,19 @@ def login(request):
     data['message'] = "Incorrect Username or Password"
     return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
+@api_view(['POST'])
+def changePassword(request):
+    data = {}
+    if request.data['password'] != request.data['password2']:
+        data['message'] = "Passwords Do Not Match!"
+        return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+    user = Customer.changePassword(request)
+    if user:
+        serializer = CustomerSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    data['message'] = "Password Change Failed"
+    return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+    
 
 
 @api_view(['POST'])
