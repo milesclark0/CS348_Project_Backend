@@ -5,7 +5,8 @@ from rest_framework import status
 from apps.Objects.models import *
 from apps.Users.models import Customer
 from apps.Objects.serializers import *
-
+from django.db import connection
+from django.shortcuts import render
 
 
 ### Object Endpoints ###
@@ -61,9 +62,22 @@ def create_order(request):
 
 @api_view(['GET'])
 def get_items(request):
-    try:
+    cursor = connection.cursor()
+    cursor.execute("call GetAllItems()")
+    results = cursor.fetchall()
+    #serializer = ItemSerializer(results, context={'request': request}, many=True)
+    #return Response(serializer.data)
+    json_data = []
+    for row in results:
+        json_data.append({"id" : row[0], "name" : row[1], "price": row[2], 
+                        "count" : row[3], "rating": row[4], "type": row[5]})
+
+    return Response(json_data)
+    #return render(request, "show_items.html", {'Item': results})
+    """try:
         result = Item.objects.all()
+        print(result)
         serializer = ItemSerializer(result, context={'request': request}, many=True)
         return Response(serializer.data)
     except Item.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)   
+        return Response(status=status.HTTP_404_NOT_FOUND)  """
