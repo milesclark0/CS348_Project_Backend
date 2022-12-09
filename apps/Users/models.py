@@ -161,8 +161,8 @@ class Employee(models.Model):
             pass
         if user:
             auth = user.password == Employee.encrypt_pass(password)
-        if auth:
-            return user
+            if auth:
+                return user
         return None
 
     def changePassword(request):
@@ -177,5 +177,3 @@ class Employee(models.Model):
         if user:
             return user[0]
         return None
-
-

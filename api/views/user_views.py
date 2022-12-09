@@ -42,3 +42,13 @@ def addCustomer(request):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def getEmployees(request, manager_id):
+    try:
+        employees = Employee.objects.filter(manager_id=manager_id)
+        serializer = EmployeeSerializer(employees, many=True)
+        return Response(serializer.data)
+    except Employee.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)

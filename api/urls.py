@@ -8,12 +8,17 @@ urlpatterns = [
     path('getCustomers/', user_views.getCustomers),
     path('getCustomers/<str:pk>/', user_views.getCustomer, name="uno"),
     path('addCustomer/', user_views.addCustomer),
+    path('getEmployees/<str:manager_id>/', user_views.getEmployees),
 
 
     path('login/', account_views.login),
     path('register/', account_views.register),
     path('changePassword/', account_views.changePassword),
+
+
     path('hire/', account_views.hire),
+    path('fireEmployee/<str:employee_id>', account_views.fire),
+
 
     path('getRecentOrder/<str:customer_id>', object_views.get_recent_order),
     path('getOrders/<str:customer_id>', object_views.get_orders),

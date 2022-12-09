@@ -97,3 +97,13 @@ def hire(request):
         return Response(serializer.data)
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['DELETE'])
+def fire(request, employee_id):
+    user = None
+    try: 
+        user = Employee.objects.get(id=employee_id)
+        user.delete()
+    except Employee.DoesNotExist as e:
+        return Response(data=str(e), status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_200_OK)
+
