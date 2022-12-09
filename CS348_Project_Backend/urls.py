@@ -20,6 +20,5 @@ from apps.Objects import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('show_items/', views.show_items)
 ]
 

@@ -2,6 +2,7 @@ from django.urls import path
 from api.views import user_views
 from api.views import account_views
 from api.views import object_views
+from apps.Objects import views
 
 
 urlpatterns = [

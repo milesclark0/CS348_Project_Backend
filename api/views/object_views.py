@@ -5,7 +5,8 @@ from rest_framework import status
 from apps.Objects.models import *
 from apps.Users.models import Customer
 from apps.Objects.serializers import *
-
+from django.db import connection
+from django.shortcuts import render
 
 
 ### Object Endpoints ###
@@ -52,6 +53,15 @@ def create_order(request):
             except CartItem.DoesNotExist:
                 return Response(data={"message": "Could not create or find cart item"}, status=status.HTTP_404_NOT_FOUND)
         new_items.append(cart_item)
+
+        #Update Quantities of Each item in Order
+        item_changed = Item.objects.get(id=item['item_id'])
+        new_quantity = item_changed.count - item['cart_count']
+        if new_quantity < 0:
+            return Response(data={"message": "Not Enough Stock For This Order!"}, status=status.HTTP_404_NOT_FOUND)
+        item_changed.count = item_changed.count - item['cart_count']
+        item_changed.save()
+        
     data['items'] = new_items  
     serializer = OrderSerializer(data=data)
     if serializer.is_valid():
@@ -61,9 +71,22 @@ def create_order(request):
 
 @api_view(['GET'])
 def get_items(request):
-    try:
+    cursor = connection.cursor()
+    cursor.execute("call GetAllItems()")
+    results = cursor.fetchall()
+    #serializer = ItemSerializer(results, context={'request': request}, many=True)
+    #return Response(serializer.data)
+    json_data = []
+    for row in results:
+        json_data.append({"id" : row[0], "name" : row[1], "price": row[2], 
+                        "count" : row[3], "rating": row[4], "type": row[5]})
+
+    return Response(json_data)
+    #return render(request, "show_items.html", {'Item': results})
+    """try:
         result = Item.objects.all()
+        print(result)
         serializer = ItemSerializer(result, context={'request': request}, many=True)
         return Response(serializer.data)
     except Item.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)   
+        return Response(status=status.HTTP_404_NOT_FOUND)  """
