@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.Users.serializers import *
 from apps.Users.models import *
+from django.db import connection
 
 
 
@@ -46,9 +47,10 @@ def addCustomer(request):
 
 @api_view(['GET'])
 def getEmployees(request, manager_id):
-    try:
-        employees = Employee.objects.filter(manager_id=manager_id)
-        serializer = EmployeeSerializer(employees, many=True)
-        return Response(serializer.data)
-    except Employee.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    cursor = connection.cursor()
+    cursor.execute("call getEmployees({manager_id})".format(manager_id=manager_id))
+    fields = [desc[0] for desc in cursor.description]
+    employees = cursor.fetchall()
+
+    return Response([dict(zip(fields, employee)) for employee in employees])
