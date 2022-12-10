@@ -27,4 +27,6 @@ urlpatterns = [
     
 
     path('getItems/', object_views.get_items),
+
+    path('getOrderItems/', object_views.get_order_items)
 ]

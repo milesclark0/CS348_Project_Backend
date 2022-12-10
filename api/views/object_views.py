@@ -42,6 +42,7 @@ def create_order(request):
     #Check if cart items exist
     data = request.data
     items = data['items']
+    print(items)
     new_items = []
     for item in items:
         item_exists = CartItem.objects.filter(item_id=item['item_id'], cart_count=item['cart_count']).exists()
@@ -56,10 +57,10 @@ def create_order(request):
 
         #Update Quantities of Each item in Order
         item_changed = Item.objects.get(id=item['item_id'])
-        new_quantity = item_changed.count - item['cart_count']
+        new_quantity = item_changed.count - int(item['cart_count'])
         if new_quantity < 0:
             return Response(data={"message": "Not Enough Stock For This Order!"}, status=status.HTTP_404_NOT_FOUND)
-        item_changed.count = item_changed.count - item['cart_count']
+        item_changed.count = item_changed.count - int(item['cart_count'])
         item_changed.save()
         
     data['items'] = new_items  
@@ -80,7 +81,7 @@ def get_items(request):
     for row in results:
         json_data.append({"id" : row[0], "name" : row[1], "price": row[2], 
                         "count" : row[3], "rating": row[4], "type": row[5]})
-
+    cursor.close()
     return Response(json_data)
     #return render(request, "show_items.html", {'Item': results})
     """try:
@@ -90,3 +91,19 @@ def get_items(request):
         return Response(serializer.data)
     except Item.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)  """
+
+
+@api_view(['POST'])
+def get_order_items(request):
+    print(request.data)
+    cursor = connection.cursor()
+    arg = [request.data]
+    print(arg)
+    cursor.callproc('getOrderItems', arg)
+    results = cursor.fetchall()
+    data = []
+    for row in results:
+        data.append({"id": row[0],"item" : row[1], "price" : row[2]})
+
+    cursor.close()
+    return Response(data)
