@@ -56,12 +56,12 @@ def create_order(request):
 
         #Update Quantities of Each item in Order
         item_changed = Item.objects.get(id=item['item_id'])
-        new_quantity = item_changed.count - item['cart_count']
+        new_quantity = item_changed.count - int(item['cart_count'])
         if new_quantity < 0:
             return Response(data={"message": "Not Enough Stock For This Order!"}, status=status.HTTP_404_NOT_FOUND)
-        item_changed.count = item_changed.count - item['cart_count']
+        item_changed.count = item_changed.count - int(item['cart_count'])
         item_changed.save()
-        
+
     data['items'] = new_items  
     serializer = OrderSerializer(data=data)
     if serializer.is_valid():
