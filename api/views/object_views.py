@@ -110,22 +110,42 @@ def get_order_items(request):
 
 @api_view(['POST'])
 def add_rating(request):
-    employee = request.data.get("employeeID", None)
-    item = request.data.get("itemID", None)
+    employee = None
+    item = None 
+    customer = None
+    order = None
+    try:  
+        employee = Employee.objects.get(id=request.data.get("employee", None))
+    except Employee.DoesNotExist:
+        pass
     try:
-        if employee is None and item is not None:
-            Review.objects.create(rating=request.data["rating"], employee_id=employee,
-                                  item_id=item, customer_id=request.data["customerID"])
-        elif employee is not None and item is None:
-            Review.objects.create(rating=request.data["rating"], employee_id = employee,
-                              item_id=item, customer_id = request.data["customerID"])
+        item = Item.objects.get(id=request.data.get("item", None))
+    except Item.DoesNotExist:
+        pass
+    try:
+        customer = Customer.objects.get(id=request.data.get("customer", None))
+    except Customer.DoesNotExist:
+        return Response(data={"message": "Could not create review without a specified customer"}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        order = Order.objects.get(id=request.data.get("order", None))
+    except Order.DoesNotExist:
+        return Response(data={"message": "Could not create review without a specified order"}, status=status.HTTP_404_NOT_FOUND)
+    print(order)
+    rating = request.data.get("rating", 0.0)
+    try:
+        if employee and item:
+            return Response(data={"message": "Could not create review with both item and driver specified"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response(data={"message": "Could not create Review with employee and item specified"}, status=status.HTTP_404_NOT_FOUND)
-    except Review.DoesNotExist:
-        return Response(data={"message": "Could not create or find Review"}, status=status.HTTP_404_NOT_FOUND)
-
-
-    return Response("It Works!", status=status.HTTP_200_OK)
+            serializer=ReviewSerializer(data=request.data, many=False)
+            if serializer.is_valid():
+                if item:
+                    Review.objects.update_or_create(customer=customer, item=item, defaults={'rating': rating, 'order': order})
+                else:
+                    Review.objects.update_or_create(customer=customer, employee=employee, order=order, defaults={'rating': rating})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(data={"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_open_jobs(request,):
