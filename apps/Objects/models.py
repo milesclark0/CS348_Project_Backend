@@ -106,7 +106,7 @@ class Review(models.Model):
     rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0, null=False)
     date_time = models.DateTimeField(auto_now_add=True, null=False)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
 
