@@ -107,3 +107,29 @@ def get_order_items(request):
 
     cursor.close()
     return Response(data)
+
+@api_view(['POST'])
+def add_rating(request):
+    print(request.data["orderID"])
+    order = ""
+    try:
+        order = Order.objects.get(id=request.data["orderID"])
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = OrderSerializer(order)
+    print(serializer.data)
+    orderdata = serializer.data
+    employee = orderdata["employee"]
+    try:
+        if employee is None:
+            Review.objects.create(rating=request.data["rating"], employee_id=1,
+                                  order_id_id=request.data["orderID"],
+                                  item_id=request.data["itemID"], customer_id=request.data["customerID"])
+        else:
+            Review.objects.create(rating=request.data["rating"], employee_id = employee, order_id_id = request.data["orderID"],
+                              item_id= request.data["itemID"], customer_id = request.data["customerID"])
+    except Review.DoesNotExist:
+        return Response(data={"message": "Could not create or find Review"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    return Response("It Works!")
