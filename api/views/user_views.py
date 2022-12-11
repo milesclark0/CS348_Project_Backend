@@ -54,3 +54,14 @@ def getEmployees(request, manager_id):
     employees = cursor.fetchall()
 
     return Response([dict(zip(fields, employee)) for employee in employees])
+
+@api_view(['GET'])
+def getJobs(request, employee_id):
+    cursor = connection.cursor()
+    cursor.execute("call getJobs({employee_id})".format(employee_id=employee_id))
+    fields = [desc[0] for desc in cursor.description]
+    jobs = cursor.fetchall()
+    cursor.close()
+
+    return Response([dict(zip(fields, job)) for job in jobs])
+

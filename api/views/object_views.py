@@ -117,7 +117,6 @@ def add_rating(request):
     except Order.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     serializer = OrderSerializer(order)
-    print(serializer.data)
     orderdata = serializer.data
     employee = orderdata["employee"]
     try:
@@ -133,3 +132,25 @@ def add_rating(request):
 
 
     return Response("It Works!")
+
+@api_view(['GET'])
+def get_open_jobs(request,):
+    cursor = connection.cursor()
+    cursor.execute("call getOpenJobs()")
+    fields = [desc[0] for desc in cursor.description]
+    jobs = cursor.fetchall()
+    cursor.close()
+
+    return Response([dict(zip(fields, job)) for job in jobs])
+
+@api_view(['POST'])
+def accept_job(request):
+    data = request.data
+    try:
+        order = Order.objects.get(id=data["orderID"])
+        order.employee_id = data["empID"]
+        order.save()
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    return Response("HELLO!")
