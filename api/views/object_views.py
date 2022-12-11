@@ -67,6 +67,12 @@ def create_order(request):
     serializer = OrderSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
+        
+        user_id = data['customer']
+        loyal_customer = Customer.objects.get(id=user_id)
+        loyal_customer.points = loyal_customer.points + 1
+        loyal_customer.save()
+        
         return Response(serializer.data)
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
